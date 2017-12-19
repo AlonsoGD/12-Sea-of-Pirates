@@ -19,11 +19,15 @@ const RIGHTKEY = {
 }
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
+var startedGame = false;
 //activate game
 
 html.onclick = function () {
-  loop();
-  return false;
+  if (startedGame === false) {
+    startedGame = true;
+    loop();
+    return false;
+  }
 }
 
 //game loop
@@ -79,15 +83,16 @@ function Boat(name, x, y) {
   this.velX = 0;
   this.velY = 0;
 
-  this.texture = new Image();
-  this.texture.src = 'media/playerShip.png';
+  this.boatTexture = new Image();
+  this.boatTexture.src = 'media/playerShip.png';
 }
 
 //Boat object methods 
 Boat.prototype = {
   draw: function() {
-    ctx.drawImage(this.texture, this.x, this.y, this.w, this.h);
+    ctx.drawImage(this.boatTexture, this.x, this.y, this.w, this.h);
   },
+
   checkBounds: function() {
     if ((this.x) >= width + (this.w * 1.1)) {
       this.x = -(this.w);
@@ -105,9 +110,11 @@ Boat.prototype = {
       this.y = height + (this.w);
     }
   },
+
   turn: function(dir) {
     this.angle += this.turnSpeed * dir;
   },
+
   update: function() {
     var radians = this.angle/Math.PI*180;
     
@@ -167,10 +174,10 @@ Boat.prototype = {
     }
   
     if (LEFTKEY.pressed === true) {
-      _this.turn(-1);
+      _this.turn(-0.5);
     } 
     if (RIGHTKEY.pressed === true) {
-      _this.turn(1);
+      _this.turn(0.5);
     } 
     if (UPKEY.pressed === true) {
       _this.isThrusting = true;
@@ -179,6 +186,7 @@ Boat.prototype = {
       _this.isThrusting = false;
     }
   },
+
   collisionDetect: function() {
 
   },
