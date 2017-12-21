@@ -63,8 +63,9 @@ function Boat(name, x, y) {
 
   this.x = x;
   this.y = y;
-  this.w = 70;
-  this.h = 120;
+
+  this.w = 170;
+  this.h = 78;
 
   this.exist = true;
   this.hp = 100;
@@ -90,7 +91,13 @@ function Boat(name, x, y) {
 //Boat object methods 
 Boat.prototype = {
   draw: function() {
-    ctx.drawImage(this.boatTexture, this.x, this.y, this.w, this.h);
+    var radians = this.angle/Math.PI*180;
+
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(radians);
+    ctx.drawImage(this.boatTexture, -this.w/2, -this.h/2);
+    ctx.restore();
   },
 
   checkBounds: function() {
@@ -174,7 +181,7 @@ Boat.prototype = {
     }
   
     if (LEFTKEY.pressed === true) {
-      _this.turn(-0.5);
+      _this.turn(-0.5); 
     } 
     if (RIGHTKEY.pressed === true) {
       _this.turn(0.5);
