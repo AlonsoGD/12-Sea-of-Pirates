@@ -64,18 +64,17 @@ function Boat(name, x, y) {
   this.x = x;
   this.y = y;
 
-  this.w = 170;
-  this.h = 78;
+  this.w = 90;
+  this.h = 41;
 
   this.exist = true;
   this.hp = 100;
 
   this.isThrusting = false;
-  this.thrust = 0.1;
-  this.turnSpeed = 0.001;
+  this.thrust = 0.065;
+  this.turnSpeed = 0.0002;
   this.angle = 0;
-  this.friction = 0.985;
-  this.maxSpeed = 0.1;
+  this.friction = 0.98;
 
   this.pointLength = 20;
   this.px = 0;
@@ -96,7 +95,7 @@ Boat.prototype = {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(radians);
-    ctx.drawImage(this.boatTexture, -this.w/2, -this.h/2);
+    ctx.drawImage(this.boatTexture, -(this.w*1.5)/2, -this.h/2);
     ctx.restore();
   },
 
@@ -179,13 +178,15 @@ Boat.prototype = {
           break;
       }
     }
-  
-    if (LEFTKEY.pressed === true) {
-      _this.turn(-0.5); 
-    } 
-    if (RIGHTKEY.pressed === true) {
-      _this.turn(0.5);
-    } 
+    
+    if (this.isThrusting === true) {
+      if (LEFTKEY.pressed === true) {
+        _this.turn(-1); 
+      } 
+      if (RIGHTKEY.pressed === true) {
+        _this.turn(1);
+      } 
+    }
     if (UPKEY.pressed === true) {
       _this.isThrusting = true;
     }
