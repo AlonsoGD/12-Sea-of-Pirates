@@ -46,20 +46,18 @@ function loop() {
   if (playerBoat === undefined) {
     playerBoat = new Boat ("Santa Maria", random(0, width), random(0, height));
   }
+  
+  if (playerCannon === undefined) {
+    playerCannon = new Cannon(playerBoat.x, playerBoat.y, 20, 'transparent');
+  }
+
+  playerCannon.draw();
   playerBoat.draw();
   playerBoat.setControls();
+  playerCannon.setControls();
   playerBoat.update();
   playerBoat.checkBounds();
-
-  if (playerCannon === undefined) {
-    playerCannon = new Cannon(playerBoat.x, playerBoat.y, 1);
-  }
-  playerCannon.setControlsCannons();
-  playerCannon.updateCannon(mX, mY);
-  playerCannon.renderCannon();
-  playerCannon.setControls();
-  playerCannon.update();
-  playerCannon.checkBounds();
+  playerCannon.update(mX, mY);
 
   requestAnimationFrame(loop);
 }
@@ -70,18 +68,10 @@ function random(min,max) {
   return num;
 }
 
-//Boat object constructor
-function Boat(name, x, y) {
-  this.name = name;
-
+//Object common for every object in the boat or the boat itself. Determines its position, speed, turnspeed, thrust, etc.
+function OnBoatObj (x, y) {
   this.x = x;
   this.y = y;
-
-  this.w = 90;
-  this.h = 41;
-
-  this.exist = true;
-  this.hp = 100;
 
   this.isThrusting = false;
   this.thrust = 0.065;
@@ -89,16 +79,31 @@ function Boat(name, x, y) {
   this.angle = 0;
   this.friction = 0.98;
 
-  this.pointLength = 20;
   this.px = 0;
   this.py = 0;
 
   this.velX = 0;
   this.velY = 0;
+}
+
+//Boat object constructor
+function Boat(name, x, y) {
+  OnBoatObj.call(this, x, y); //inherits OnBoatObj properties
+
+  this.w = 65;
+  this.h = 31;
+
+  this.name = name;
+
+  this.exist = true;
+  this.hp = 100;
 
   this.boatTexture = new Image();
   this.boatTexture.src = 'media/playerShip.png';
 }
+
+Boat.prototype = Object.create(OnBoatObj.prototype);
+Boat.prototype.constructor = Boat;
 
 //Boat object methods 
 Boat.prototype = {
@@ -221,35 +226,24 @@ Boat.prototype = {
 
 //Cannon object constructor
 function Cannon(x, y, radius, color) {
-  this.x = x;
-  this.y = y;
+  OnBoatObj.call(this, x, y); //inherits OnBoatObj properties
+
   this.radius = radius || 10;
 
-  this.w = 90;
-  this.h = 41;
-  
   this.x = (this.x-this.radius/2)
   this.y = (this.y-this.radius/2);
 
-  this.isThrusting = false;
-  this.thrust = 0.065;
-  this.turnSpeed = 0.0002;
-  this.angle = 0;
-  this.friction = 0.98;
+  this.pointLength = 27;
 
-  this.pointLength = 100;
-  this.px = 0;
-  this.py = 0;
-
-  this.velX = 0;
-  this.velY = 0;
-
-  this.color = color || "rgb(255,0,0)";
+  this.color = color || "rgba(255, 255, 255, 0.0);";
 }
+
+Cannon.prototype = Object.create(OnBoatObj.prototype);
+Cannon.prototype.constructor = Cannon;
 
 //Cannon Methods
 Cannon.prototype = {
-  updateCannon: function(x, y) {
+  update: function(x, y) {
     // get the target x and y
     this.targetX = x;
     this.targetY = y;
@@ -260,16 +254,22 @@ Cannon.prototype = {
     
     this.px = this.x - this.pointLength * Math.cos(radians);
     this.py = this.y - this.pointLength * Math.sin(radians);
+
+    this.x = playerBoat.x;
+    this.y = playerBoat.y;
+
+    this.angle = playerBoat.angle;
   },
 
-  renderCannon: function() {
+  draw: function() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.closePath();
     ctx.fill();
     
-    ctx.strokeStyle = "rgb(0,0,255)";
+    ctx.strokeStyle = "rgb(0,0,0)";
+    ctx.lineWidth = 7;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(this.px, this.py);
@@ -277,106 +277,11 @@ Cannon.prototype = {
     ctx.stroke();
   },
 
-  setControlsCannons: function() {
+  setControls: function() {
     canvas.addEventListener("mousemove", function (e) {
       mX = e.pageX;
       mY = e.pageY;
     });
   },
 
-  checkBounds: function() {
-    if ((this.x) >= width + (this.w * 1.1)) {
-      this.x = -(this.w);
-    }
-  
-    if ((this.x) <= -(this.w * 1.1)) {
-      this.x = width + (this.w);
-     }
-  
-    if ((this.y ) >= height + (this.w * 1.1)) {
-      this.y = -(this.w);
-    }
-  
-    if ((this.y) <= -(this.w * 1.1)) {
-      this.y = height + (this.w);
-    }
-  },
-
-  turn: function(dir) {
-    this.angle += this.turnSpeed * dir;
-  },
-
-  update: function() {
-    var radians = this.angle/Math.PI*180;
-    
-    if(this.isThrusting){
-      this.velX += Math.cos(radians) * this.thrust;
-      this.velY += Math.sin(radians) * this.thrust;
-    }
-        
-    // calc the point out in front of the ship
-    this.px = this.x - this.pointLength * Math.cos(radians);
-    this.py = this.y - this.pointLength * Math.sin(radians);
-
-    // apply friction
-    this.velX *= this.friction;
-    this.velY *= this.friction;
-    
-    // apply velocities    
-    this.x -= this.velX;
-    this.y -= this.velY;
-  },
-
-  setControls: function() {
-    var _this = this;
-
-    window.onkeydown = function(event) {
-      switch (event.which || event.keyCode) {
-        case LEFTKEY.keycode: // Left
-          LEFTKEY.pressed = true;
-          break;
-        case RIGHTKEY.keycode: // Right
-          RIGHTKEY.pressed = true;
-          break;
-        case UPKEY.keycode: // Up
-          UPKEY.pressed = true;
-          break;
-        case DOWNKEY.keycode: // Down
-          DOWNKEY.pressed = true;
-          break;
-      }
-    }
-  
-    window.onkeyup = function(event) {
-      switch (event.which || event.keyCode) {
-        case LEFTKEY.keycode: // Left
-          LEFTKEY.pressed = false;
-          break;
-        case RIGHTKEY.keycode: // Right
-          RIGHTKEY.pressed = false;
-          break;
-        case UPKEY.keycode: // Up
-          UPKEY.pressed = false;
-          break;
-        case DOWNKEY.keycode: // Down
-          DOWNKEY.pressed = false;
-          break;
-      }
-    }
-    
-    if (this.isThrusting === true) {
-      if (LEFTKEY.pressed === true) {
-        _this.turn(-1); 
-      } 
-      if (RIGHTKEY.pressed === true) {
-        _this.turn(1);
-      } 
-    }
-    if (UPKEY.pressed === true) {
-      _this.isThrusting = true;
-    }
-    if (UPKEY.pressed === false) {
-      _this.isThrusting = false;
-    }
-  },
 }
