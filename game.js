@@ -233,7 +233,7 @@ function Cannon(x, y, radius, color) {
   this.x = (this.x-this.radius/2)
   this.y = (this.y-this.radius/2);
 
-  this.pointLength = 27;
+  this.pointLength = 23;
 
   this.color = color || "rgba(255, 255, 255, 0.0);";
 }
