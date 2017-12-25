@@ -268,13 +268,15 @@ Cannon.prototype = {
     ctx.closePath();
     ctx.fill();
     
-    ctx.strokeStyle = "rgb(0,0,0)";
-    ctx.lineWidth = 7;
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(this.px, this.py);
-    ctx.closePath();
-    ctx.stroke();
+    if (this.x <= width && this.x >= 0 && this.y <= height && this.y >= 0) { 
+      ctx.strokeStyle = "rgb(0,0,0)";
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.px, this.py);
+      ctx.closePath();
+      ctx.stroke();
+    }
   },
 
   setControls: function() {
