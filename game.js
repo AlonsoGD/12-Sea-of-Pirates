@@ -1,33 +1,33 @@
-const html = document.querySelector('html');
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
-const UPKEY = {
-  keycode : 87,
-  pressed : false 
-}
-const DOWNKEY = {
-  keycode : 83,
-  pressed : false
-}
-const LEFTKEY = {
-  keycode : 65,
-  pressed : false
-}
-const RIGHTKEY = {
-  keycode : 68,
-  pressed : false
-}
-const SPACEKEY = {
-  keycode : 32,
-  pressed : false
-}
-var width = canvas.width = window.innerWidth;
-var height = canvas.height = window.innerHeight;
-var startedGame = false;
-var mX = 0
-var mY = 0
+//global variables
+  const html = document.querySelector('html');
+  const canvas = document.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  const UPKEY = {
+    keycode : 87,
+    pressed : false 
+  }
+  const DOWNKEY = {
+    keycode : 83,
+    pressed : false
+  }
+  const LEFTKEY = {
+    keycode : 65,
+    pressed : false
+  }
+  const RIGHTKEY = {
+    keycode : 68,
+    pressed : false
+  }
+  const SPACEKEY = {
+    keycode : 32,
+    pressed : false
+  }
+  var width = canvas.width = window.innerWidth;
+  var height = canvas.height = window.innerHeight;
+  var startedGame = false;
+  var mX = 0
+  var mY = 0
 //activate game
-
 html.onclick = function () {
   if (startedGame === false) {
     startedGame = true;
@@ -63,6 +63,14 @@ function loop() {
   playerBoat.update();
   playerBoat.checkBounds();
   playerCannon.update(mX, mY);
+  
+  for (var i = 0; i < cannonBalls.length; i++){
+    if (cannonBalls[i].exist === true) {
+    cannonBalls[i].draw();
+    cannonBalls[i].update();
+    }
+  }
+
 
   requestAnimationFrame(loop);
 }
@@ -222,21 +230,12 @@ Boat.prototype = {
     if (UPKEY.pressed === false) {
       _this.isThrusting = false;
     }
-    if (SPACEKEY.pressed === true) {
-      _this.shoot();
-    }
   },
 
   collisionDetect: function() {
 
   },
   explode: function() {
-
-  },
-  shoot: function() {
-    var cannonBall = new CannonBall()
-    cannonBall.draw();
-    cannonBalls.push(cannonBall);
 
   }
 }
@@ -301,19 +300,33 @@ Cannon.prototype = {
       mX = e.pageX;
       mY = e.pageY;
     });
+    
+    if (SPACEKEY.pressed === true) {
+      playerCannon.shoot();
+      SPACEKEY.pressed = false;
+    }
+  },
+
+  shoot: function() {
+    if (cannonBalls.length < 10000) { 
+      cannonBall = new CannonBall(playerBoat.x, playerBoat.y, this.px, this.py);
+      cannonBalls.push(cannonBall);
+    }
   },
 }
 
 //CannonBall object constructor
-function CannonBall () {
-  this.x = playerBoat.x;
-  this.y = playerBoat.y;
+function CannonBall (x, y, velX, velY) {
+  this.x = x;
+  this.y = y;
   this.speed = 1;
 
-  this.velX = 0;
-  this.velY = 0;
+  this.velX = velX / 100;
+  this.velY = velY / 100;
 
-  this.radius = 10;
+  this.radius = 4;
+
+  this.exist = true;
 
   //this.cannonBallTexture = new Image();
   //this.cannonBallTexture.src = '';
@@ -327,5 +340,10 @@ CannonBall.prototype = {
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.closePath();
     ctx.fill();
+  },
+
+  update: function() {
+    this.x += this.velX;
+    this.y += this.velY;
   }
 }
