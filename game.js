@@ -22,6 +22,10 @@
     keycode : 32,
     pressed : false
   }
+  const LEFTCLICK = {
+    keycode : 0,
+    pressed : false
+  }
   var width = canvas.width = window.innerWidth;
   var height = canvas.height = window.innerHeight;
   var startedGame = false;
@@ -176,6 +180,18 @@ Boat.prototype = {
   setControls: function() {
     var _this = this;
 
+    window.onmousedown = function(event) {
+      if (event.button === LEFTCLICK.keycode) {
+        LEFTCLICK.pressed = true;
+      }
+    }
+
+    window.onmouseup = function(event) {
+      if (event.button === LEFTCLICK.keycode) {
+        LEFTCLICK.pressed = false;
+      }
+    }
+
     window.onkeydown = function(event) {
       switch (event.which || event.keyCode) {
         case LEFTKEY.keycode: // Left
@@ -190,9 +206,9 @@ Boat.prototype = {
         case DOWNKEY.keycode: // Down
           DOWNKEY.pressed = true;
           break;
-        case SPACEKEY.keycode: //Shoot
-          SPACEKEY.pressed = true;
-          break
+        // case SPACEKEY.keycode: //Shoot
+        //   SPACEKEY.pressed = true;
+        //   break;
       }
     }
   
@@ -210,9 +226,9 @@ Boat.prototype = {
         case DOWNKEY.keycode: // Down
           DOWNKEY.pressed = false;
           break;
-        case SPACEKEY.keycode: //Shoot
-          SPACEKEY.pressed = false;
-          break;
+        // case SPACEKEY.keycode: //Shoot
+        //   SPACEKEY.pressed = false;
+        //   break;
       }
     }
     
@@ -301,9 +317,10 @@ Cannon.prototype = {
       mY = e.pageY;
     });
     
-    if (SPACEKEY.pressed === true) {
+    if (SPACEKEY.pressed === true || LEFTCLICK.pressed === true) {
       playerCannon.shoot();
-      SPACEKEY.pressed = false;
+      //SPACEKEY.pressed = false;
+      LEFTCLICK.pressed = false;
     }
   },
 
