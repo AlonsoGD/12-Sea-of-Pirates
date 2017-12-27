@@ -29,8 +29,8 @@
   var width = canvas.width = window.innerWidth;
   var height = canvas.height = window.innerHeight;
   var startedGame = false;
-  var mX = 0
-  var mY = 0
+  var mX = 0;
+  var mY = 0;
 //activate game
 html.onclick = function () {
   if (startedGame === false) {
@@ -277,12 +277,12 @@ Cannon.prototype.constructor = Cannon;
 Cannon.prototype = {
   update: function(x, y) {
     // get the target x and y
-    this.targetX = x;
-    this.targetY = y;
+    this.targetX = mX;
+    this.targetY = mY;
     
-    var x = this.x - this.targetX;
-    var y = this.y - this.targetY;
-    var radians = Math.atan2(y,x);
+    this.directionX = this.x - this.targetX;
+    this.directionY = this.y - this.targetY;
+    var radians = Math.atan2(this.directionY,this.directionX);
     
     this.px = this.x - this.pointLength * Math.cos(radians);
     this.py = this.y - this.pointLength * Math.sin(radians);
@@ -318,7 +318,7 @@ Cannon.prototype = {
     });
     
     if (SPACEKEY.pressed === true || LEFTCLICK.pressed === true) {
-      playerCannon.shoot();
+      this.shoot();
       //SPACEKEY.pressed = false;
       LEFTCLICK.pressed = false;
     }
@@ -326,20 +326,25 @@ Cannon.prototype = {
 
   shoot: function() {
     if (cannonBalls.length < 10000) { 
-      cannonBall = new CannonBall(playerBoat.x, playerBoat.y, this.px, this.py);
+      cannonBall = new CannonBall(playerCannon.px, playerCannon.py);
       cannonBalls.push(cannonBall);
     }
   },
 }
 
 //CannonBall object constructor
-function CannonBall (x, y, velX, velY) {
+function CannonBall (x, y) {
   this.x = x;
   this.y = y;
-  this.speed = 1;
 
-  this.velX = velX / 100;
-  this.velY = velY / 100;
+  this.directionX = playerCannon.directionX * -1;
+  this.directionY = playerCannon.directionY * -1;
+
+  var len = Math.sqrt(this.directionX * this.directionX + this.directionY * this.directionY);
+  this.directionX = this.directionX / len;
+  this.directionY = this.directionY / len;
+
+  this.speed = 5;
 
   this.radius = 4;
 
@@ -360,7 +365,7 @@ CannonBall.prototype = {
   },
 
   update: function() {
-    this.x += this.velX;
-    this.y += this.velY;
+    this.x += this.directionX * this.speed;
+    this.y += this.directionY * this.speed;
   }
 }
