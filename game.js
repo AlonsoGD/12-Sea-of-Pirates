@@ -41,6 +41,19 @@ html.onclick = function () {
 }
 
 //game loop
+function debugMode() {
+  var cannondirection = [
+    document.getElementById('cannondirectionX'), 
+    document.getElementById('cannondirectionY'), 
+    document.getElementById('cannonAngle'),
+    document.getElementById('boatAngle'),
+  ]
+  cannondirection[0].innerHTML = playerCannon.directionX;
+  cannondirection[1].innerHTML = playerCannon.directionY;
+  cannondirection[2].innerHTML = playerCannon.targetAngle;
+  cannondirection[3].innerHTML = playerBoat.boatAngleDegrees;
+}
+
 var playerBoat;
 var playerCannon;
 var seaTexture = new Image();
@@ -74,7 +87,8 @@ function loop() {
     cannonBalls[i].update();
     }
   }
-
+  
+  debugMode(); 
 
   requestAnimationFrame(loop);
 }
@@ -126,6 +140,7 @@ Boat.prototype.constructor = Boat;
 Boat.prototype = {
   draw: function() {
     var radians = this.angle/Math.PI*180;
+    this.boatAngleDegrees = radians*180/Math.PI;
 
     ctx.save();
     ctx.translate(this.x, this.y);
@@ -260,6 +275,8 @@ Boat.prototype = {
 function Cannon(x, y, radius, color) {
   OnBoatObj.call(this, x, y); //inherits OnBoatObj properties
 
+  
+
   this.radius = radius || 10;
 
   this.x = (this.x-this.radius/2)
@@ -282,7 +299,9 @@ Cannon.prototype = {
     
     this.directionX = this.x - this.targetX;
     this.directionY = this.y - this.targetY;
-    var radians = Math.atan2(this.directionY,this.directionX);
+    var radians = Math.atan2(this.directionY, this.directionX);
+
+    this.targetAngle = radians*(180/Math.PI);
     
     this.px = this.x - this.pointLength * Math.cos(radians);
     this.py = this.y - this.pointLength * Math.sin(radians);

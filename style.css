@@ -12,3 +12,14 @@ html, body {
     overflow: hidden;
     height: inherit;
   }
+
+  p {
+    padding: 0px;
+    margin: 0px;
+  }
+  
+  .debug {
+    position: absolute;
+    padding: 15px;
+    color: white;
+  }
