@@ -66,7 +66,7 @@ function loop() {
   ctx.fillRect(0, 0, width, height);
 
   if (playerBoat === undefined) {
-    playerBoat = new PlayerBoat ("Santa Maria", random(0, width), random(0, height));
+    playerBoat = new PlayerBoat ("La Pinta", random(0, width), random(0, height));
   }
   
   if (playerCannon === undefined) {
@@ -119,19 +119,14 @@ function OnBoatObj (x, y) {
 
 //Boat class
 class Boat {
-  constructor(name, x, y) {
+  constructor(x, y) {
     OnBoatObj.call(this, x, y); //inherits OnBoatObj properties
 
     this.w = 65;
     this.h = 31;
 
-    this.name = name;
-
     this.exist = true;
     this.hp = 100;
-
-    this.boatTexture = new Image();
-    this.boatTexture.src = 'media/playerShip.png';
   }
   
   draw() {
@@ -199,9 +194,11 @@ class Boat {
 
 //Player controller boat class 
 class PlayerBoat extends Boat {
-  constructor(name, x, y, w, h, exist, hp, boatTexture) {
-    super(name, x, y , w, h, exist, hp, boatTexture);
-
+  constructor(name, x, y, w, h, exist, hp) {
+    super(x, y , w, h, exist, hp);
+    this.name = name;
+    this.boatTexture = new Image();
+    this.boatTexture.src = 'media/playerShip.png';
   }
 
   setControls() {
@@ -279,8 +276,6 @@ class PlayerBoat extends Boat {
 //Cannon object constructor
 function Cannon(x, y, radius, color) {
   OnBoatObj.call(this, x, y); //inherits OnBoatObj properties
-
-  
 
   this.radius = radius || 10;
 
