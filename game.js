@@ -66,7 +66,7 @@ function loop() {
   ctx.fillRect(0, 0, width, height);
 
   if (playerBoat === undefined) {
-    playerBoat = new Boat ("Santa Maria", random(0, width), random(0, height));
+    playerBoat = new PlayerBoat ("Santa Maria", random(0, width), random(0, height));
   }
   
   if (playerCannon === undefined) {
@@ -117,7 +117,7 @@ function OnBoatObj (x, y) {
   this.velY = 0;
 }
 
-//Boat object constructor
+//Boat class
 class Boat {
   constructor(name, x, y) {
     OnBoatObj.call(this, x, y); //inherits OnBoatObj properties
@@ -188,6 +188,22 @@ class Boat {
     this.y -= this.velY;
   }
 
+  collisionDetect() {
+
+  }
+
+  explode() {
+
+  }
+}
+
+//Player controller boat class 
+class PlayerBoat extends Boat {
+  constructor(name, x, y, w, h, exist, hp, boatTexture) {
+    super(name, x, y , w, h, exist, hp, boatTexture);
+
+  }
+
   setControls() {
     var _this = this;
 
@@ -217,9 +233,9 @@ class Boat {
         case DOWNKEY.keycode: // Down
           DOWNKEY.pressed = true;
           break;
-        // case SPACEKEY.keycode: //Shoot
-        //   SPACEKEY.pressed = true;
-        //   break;
+          // case SPACEKEY.keycode: //Shoot
+          //   SPACEKEY.pressed = true;
+          //   break;
       }
     }
 
@@ -237,9 +253,9 @@ class Boat {
         case DOWNKEY.keycode: // Down
           DOWNKEY.pressed = false;
           break;
-        // case SPACEKEY.keycode: //Shoot
-        //   SPACEKEY.pressed = false;
-        //   break;
+          // case SPACEKEY.keycode: //Shoot
+          //   SPACEKEY.pressed = false;
+          //   break;
       }
     }
 
@@ -258,167 +274,7 @@ class Boat {
       _this.isThrusting = false;
     }
   }
-
-  collisionDetect() {
-
-  }
-
-  explode() {
-
-  }
 }
-
-// Boat.prototype = Object.create(OnBoatObj.prototype);
-// Boat.prototype.constructor = Boat;
-
-// //Boat object methods 
-// Boat.prototype = {
-//   draw: function() {
-//     var radians = this.angle/Math.PI*180;
-//     this.boatAngleDegrees = radians*180/Math.PI;
-
-//     ctx.save();
-//     ctx.translate(this.x, this.y);
-//     ctx.rotate(radians);
-//     ctx.drawImage(this.boatTexture, -(this.w*1.5)/2, -this.h/1.5);
-//     ctx.restore();
-//   },
-
-//   checkBounds: function() {
-//     if ((this.x) >= width + (this.w * 1.1)) {
-//       this.x = -(this.w);
-//     }
-  
-//     if ((this.x) <= -(this.w * 1.1)) {
-//       this.x = width + (this.w);
-//      }
-  
-//     if ((this.y ) >= height + (this.w * 1.1)) {
-//       this.y = -(this.w);
-//     }
-  
-//     if ((this.y) <= -(this.w * 1.1)) {
-//       this.y = height + (this.w);
-//     }
-//   },
-
-//   turn: function(dir) {
-//     this.angle += this.turnSpeed * dir;
-//   },
-
-//   update: function() {
-//     var radians = this.angle/Math.PI*180;
-    
-//     if(this.isThrusting){
-//       this.velX += Math.cos(radians) * this.thrust;
-//       this.velY += Math.sin(radians) * this.thrust;
-//     }
-        
-//     // calc the point out in front of the ship
-//     this.px = this.x - this.pointLength * Math.cos(radians);
-//     this.py = this.y - this.pointLength * Math.sin(radians);
-
-//     // apply friction
-//     this.velX *= this.friction;
-//     this.velY *= this.friction;
-    
-//     // apply velocities    
-//     this.x -= this.velX;
-//     this.y -= this.velY;
-//   },
-
-//   collisionDetect: function() {
-
-//   },
-//   explode: function() {
-
-//   }
-// }
-
-//Player boat constructor
-// function PlayerBoat(name, x, y) {
-//   Boat.call(this, name, x, y, w, h, exist, hp);
-
-//   this.boatTexture = new Image();
-//   this.boatTexture.src = 'media/playerShip.png';
-// }
-
-// PlayerBoat.prototype = Object.create(Boat.prototype);
-// PlayerBoat.prototype.constructor = PlayerBoat;
-
-// //Player boat object methods 
-// PlayerBoat.prototype = {
-//   setControls: function () {
-//     var _this = this;
-
-//     window.onmousedown = function (event) {
-//       if (event.button === LEFTCLICK.keycode) {
-//         LEFTCLICK.pressed = true;
-//       }
-//     }
-
-//     window.onmouseup = function (event) {
-//       if (event.button === LEFTCLICK.keycode) {
-//         LEFTCLICK.pressed = false;
-//       }
-//     }
-
-//     window.onkeydown = function (event) {
-//       switch (event.which || event.keyCode) {
-//         case LEFTKEY.keycode: // Left
-//           LEFTKEY.pressed = true;
-//           break;
-//         case RIGHTKEY.keycode: // Right
-//           RIGHTKEY.pressed = true;
-//           break;
-//         case UPKEY.keycode: // Up
-//           UPKEY.pressed = true;
-//           break;
-//         case DOWNKEY.keycode: // Down
-//           DOWNKEY.pressed = true;
-//           break;
-//         // case SPACEKEY.keycode: //Shoot
-//         //   SPACEKEY.pressed = true;
-//         //   break;
-//       }
-//     }
-
-//     window.onkeyup = function (event) {
-//       switch (event.which || event.keyCode) {
-//         case LEFTKEY.keycode: // Left
-//           LEFTKEY.pressed = false;
-//           break;
-//         case RIGHTKEY.keycode: // Right
-//           RIGHTKEY.pressed = false;
-//           break;
-//         case UPKEY.keycode: // Up
-//           UPKEY.pressed = false;
-//           break;
-//         case DOWNKEY.keycode: // Down
-//           DOWNKEY.pressed = false;
-//           break;
-//         // case SPACEKEY.keycode: //Shoot
-//         //   SPACEKEY.pressed = false;
-//         //   break;
-//       }
-//     }
-
-//     if (this.isThrusting === true) {
-//       if (LEFTKEY.pressed === true) {
-//         _this.turn(-1);
-//       }
-//       if (RIGHTKEY.pressed === true) {
-//         _this.turn(1);
-//       }
-//     }
-//     if (UPKEY.pressed === true) {
-//       _this.isThrusting = true;
-//     }
-//     if (UPKEY.pressed === false) {
-//       _this.isThrusting = false;
-//     }
-//   },
-// }
 
 //Cannon object constructor
 function Cannon(x, y, radius, color) {
