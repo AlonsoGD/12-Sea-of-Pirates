@@ -1,4 +1,4 @@
-# 12-Sea-of-Pirates
+# 12-Sea-of-Pirates https://alonsogd.github.io/12-Sea-of-Pirates/
 
 <p>Game prototype I made with the propuse to improve my understanding about JavaScript prototype inheritance, new ES6 class syntax, constructor functions, etc.</p>
 
